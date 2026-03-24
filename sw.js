@@ -1,19 +1,22 @@
-const CACHE_NAME = 'zran-absensi-v1';
+const CACHE_NAME = 'zran-absensi-v2';
 const ASSETS_TO_CACHE = [
-  './halaman%20Login.html',
+  './',
   './staf-absensi.html',
   './JS/staf-absensi.js',
-  './JS/firebase-config.js',
-  './LOGO%20saja%20.png'
+  './JS/firebase-config.js'
 ];
 
-// Install Service Worker
+// Install Service Worker & Pre-cache
 self.addEventListener('install', event => {
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('SW: Caching assets');
+        console.log('SW: Caching app shell');
         return cache.addAll(ASSETS_TO_CACHE);
+      })
+      .catch(err => {
+        console.warn('SW: Cache addAll gagal (mungkin offline), lanjut saja', err);
       })
   );
 });
@@ -25,7 +28,7 @@ self.addEventListener('activate', event => {
       return Promise.all(
         cacheNames.map(cacheName => {
           if (cacheName !== CACHE_NAME) {
-            console.log('SW: Clearing old cache');
+            console.log('SW: Clearing old cache:', cacheName);
             return caches.delete(cacheName);
           }
         })
@@ -35,13 +38,22 @@ self.addEventListener('activate', event => {
   return self.clients.claim();
 });
 
-// Fetch Assets from Cache App Shell
+// Network-first strategy (selalu coba ambil dari internet dulu, 
+// baru fallback ke cache kalau offline)
 self.addEventListener('fetch', event => {
   event.respondWith(
-    caches.match(event.request)
+    fetch(event.request)
       .then(response => {
-        // Balikkan dari cache, atau fetch dari network jika belum di-cache
-        return response || fetch(event.request);
+        // Simpan copy response ke cache untuk offline fallback
+        const responseClone = response.clone();
+        caches.open(CACHE_NAME).then(cache => {
+          cache.put(event.request, responseClone);
+        });
+        return response;
+      })
+      .catch(() => {
+        // Kalau offline, ambil dari cache
+        return caches.match(event.request);
       })
   );
 });

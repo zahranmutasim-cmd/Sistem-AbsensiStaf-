@@ -3,20 +3,23 @@
   "short_name": "Zran Absen",
   "description": "Sistem Absensi Karyawan Zran Corporation",
   "start_url": "./staf-absensi.html",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#1e3a5f",
   "theme_color": "#2563eb",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "LOGO saja .png",
+      "src": "LOGO%20saja%20.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "LOGO saja .png",
+      "src": "LOGO%20saja%20.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }

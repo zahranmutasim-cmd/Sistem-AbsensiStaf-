@@ -7,6 +7,11 @@
     <title>Absensi Staf — Zran Corporation</title>
     <meta name="description" content="Halaman absensi karyawan dengan scan QR Code — Zran Corporation">
 
+    <!-- PWA Setup -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="apple-touch-icon" href="LOGO saja .png">
+
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Font: Inter -->
@@ -746,6 +751,17 @@
 
     <!-- JavaScript -->
     <script src="JS/staf-absensi.js"></script>
+
+    <!-- Register PWA Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('PWA Service Worker terdaftar!', reg.scope))
+                    .catch(err => console.error('Gagal daftar Service Worker', err));
+            });
+        }
+    </script>
 </body>
 
 </html>

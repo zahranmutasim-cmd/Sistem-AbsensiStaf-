@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Zran Corporation</title>
+    <meta name="description" content="Dashboard admin Sistem Absensi Karyawan — Zran Corporation">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+
+    <!-- Tailwind Config (konsisten dengan login) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            200: '#bfdbfe',
+                            300: '#93c5fd',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e3a5f',
+                            900: '#172554',
+                            950: '#0f1d3a',
+                        },
+                    },
+                }
+            }
+        }
+    </script>
+
+    <!-- Dashboard Stylesheet -->
+    <link rel="stylesheet" href="Css/dashboard.css">
+</head>
+
+<body> 
+    <div class="dashboard-layout">
+
+        <!-- ==================== SIDEBAR ==================== -->
+        <aside class="sidebar" id="sidebar">
+
+            <!-- Brand -->
+            <div class="sidebar-brand">
+                <div class="sidebar-brand-icon">
+                    <img src="LOGO saja .png" alt="Zran Corporation" style="width:32px;height:32px;object-fit:contain;">
+                </div>
+                <div class="sidebar-brand-text">
+                    <h1>Zran Corporation</h1>
+                    <span>Sistem Absensi Karyawan</span>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <span class="nav-label">Menu Utama</span>
+
+                <a href="dashboard.html" class="nav-item active" id="navDashboard">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="Data Karyawan.html" class="nav-item" id="navKaryawan">
+                    <i data-lucide="users"></i>
+                    <span>Data Karyawan</span>
+                </a>
+                <a href="Absensi.html" class="nav-item" id="navAbsensi">
+                    <i data-lucide="clock"></i>
+                    <span>Absensi</span>
+                </a>
+                <a href="Laporan.html" class="nav-item" id="navLaporan">
+                    <i data-lucide="clipboard-list"></i>
+                    <span>Laporan</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Sidebar overlay (mobile) -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- ==================== MAIN CONTENT ==================== -->
+        <main class="main-content">
+
+            <!-- ========== TOP NAVBAR ========== -->
+            <header class="top-navbar">
+                <!-- Hamburger (mobile) -->
+                <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+                    <i data-lucide="menu" style="width:22px;height:22px;"></i>
+                </button>
+
+                <!-- Page title -->
+                <h2 class="navbar-title">Dashboard</h2>
+
+                <!-- Search -->
+                <div class="navbar-search">
+                    <i data-lucide="search" style="width:16px;height:16px;"></i>
+                    <input type="text" placeholder="Cari karyawan, laporan..." id="searchInput">
+                </div>
+
+                <!-- Right section -->
+                <div class="navbar-right">
+                    <!-- Date -->
+                    <span class="text-sm text-gray-500 hidden xl:block" id="currentDate"></span>
+
+                    <!-- Notification -->
+                    <button class="navbar-icon-btn" id="notifBtn" aria-label="Notifikasi">
+                        <i data-lucide="bell" style="width:18px;height:18px;"></i>
+                        <span class="notif-badge"></span>
+                    </button>
+
+                    <!-- Profile -->
+                    <div class="profile-wrapper">
+                        <button class="profile-btn" id="profileBtn">
+                            <div class="profile-avatar">AD</div>
+                            <div class="profile-info">
+                                <div class="name">Admin</div>
+                                <div class="role">Administrator</div>
+                            </div>
+                            <i data-lucide="chevron-down" class="chevron"></i>
+                        </button>
+
+                        <!-- Dropdown -->
+                        <div class="profile-dropdown" id="profileDropdown">
+                            <a href="#">
+                                <i data-lucide="user"></i>
+                                Profil Saya
+                            </a>
+                            <a href="#">
+                                <i data-lucide="settings"></i>
+                                Pengaturan
+                            </a>
+                            <div class="divider"></div>
+                            <a href="#" class="logout-link" onclick="handleLogout()">
+                                <i data-lucide="log-out"></i>
+                                Keluar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- ========== PAGE CONTENT ========== -->
+            <div class="page-content">
+
+                <!-- ===== STATS CARDS ===== -->
+                <div class="stats-grid">
+                    <!-- Total Karyawan -->
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <i data-lucide="users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>150</h3>
+                            <p>Total Karyawan</p>
+                            <span class="stat-change up">
+                                <i data-lucide="trending-up" style="width:12px;height:12px;"></i>
+                                +3 bulan ini
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Hadir Hari Ini -->
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i data-lucide="user-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>142</h3>
+                            <p>Hadir Hari Ini</p>
+                            <span class="stat-change up">
+                                <i data-lucide="trending-up" style="width:12px;height:12px;"></i>
+                                94.7%
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Izin Hari Ini -->
+                    <div class="stat-card">
+                        <div class="stat-icon amber">
+                            <i data-lucide="calendar-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>5</h3>
+                            <p>Izin Hari Ini</p>
+                            <span class="stat-change down">
+                                <i data-lucide="trending-down" style="width:12px;height:12px;"></i>
+                                3.3%
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Sakit Hari Ini -->
+                    <div class="stat-card">
+                        <div class="stat-icon red">
+                            <i data-lucide="thermometer"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>3</h3>
+                            <p>Sakit Hari Ini</p>
+                            <span class="stat-change down">
+                                <i data-lucide="trending-down" style="width:12px;height:12px;"></i>
+                                2.0%
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== CHART + QUICK INFO ===== -->
+                <div class="content-grid">
+
+                    <!-- Chart Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Statistik Kehadiran Karyawan</h2>
+                            <span class="badge">Minggu Ini</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="attendanceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Info -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2>Informasi Cepat</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="quick-info-list">
+                                <div class="quick-info-item">
+                                    <div class="quick-info-icon" style="background:#eff6ff;color:#2563eb;">
+                                        <i data-lucide="clock"></i>
+                                    </div>
+                                    <div class="quick-info-text">
+                                        <h4>Jam Kerja Hari Ini</h4>
+                                        <p>08:00 — 17:00 WIB</p>
+                                    </div>
+                                </div>
+                                <div class="quick-info-item">
+                                    <div class="quick-info-icon" style="background:#f0fdf4;color:#16a34a;">
+                                        <i data-lucide="check-circle-2"></i>
+                                    </div>
+                                    <div class="quick-info-text">
+                                        <h4>Tingkat Kehadiran</h4>
+                                        <p>94.7% minggu ini</p>
+                                    </div>
+                                </div>
+                                <div class="quick-info-item">
+                                    <div class="quick-info-icon" style="background:#fffbeb;color:#d97706;">
+                                        <i data-lucide="alert-circle"></i>
+                                    </div>
+                                    <div class="quick-info-text">
+                                        <h4>Pengajuan Izin Pending</h4>
+                                        <p>3 pengajuan menunggu</p>
+                                    </div>
+                                </div>
+                                <div class="quick-info-item">
+                                    <div class="quick-info-icon" style="background:#fef2f2;color:#dc2626;">
+                                        <i data-lucide="calendar-x"></i>
+                                    </div>
+                                    <div class="quick-info-text">
+                                        <h4>Karyawan Terlambat</h4>
+                                        <p>2 orang hari ini</p>
+                                    </div>
+                                </div>
+                                <div class="quick-info-item">
+                                    <div class="quick-info-icon" style="background:#f5f3ff;color:#7c3aed;">
+                                        <i data-lucide="calendar-days"></i>
+                                    </div>
+                                    <div class="quick-info-text">
+                                        <h4>Hari Libur Berikutnya</h4>
+                                        <p>22 Maret — Nyepi</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== ATTENDANCE TABLE ===== -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Absensi Terbaru</h2>
+                        <span class="badge">Hari Ini</span>
+                    </div>
+                    <div class="card-body" style="padding-left:0;padding-right:0;">
+                        <div class="table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Karyawan</th>
+                                        <th>Tanggal</th>
+                                        <th>Jam Masuk</th>
+                                        <th>Jam Keluar</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="attendanceTableBody">
+                                    <!-- Rendered by dashboard.js -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDK (CDN Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="JS/firebase-config.js"></script>
+
+    <!-- Dashboard JavaScript -->
+    <script src="JS/dashboard.js"></script>
+</body>
+
+</html>

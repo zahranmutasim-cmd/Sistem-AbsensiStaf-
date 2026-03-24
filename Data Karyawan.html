@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Karyawan — Zran Corporation</title>
+    <meta name="description" content="Kelola data karyawan — Zran Corporation">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 'inter': ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe',
+                            300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6',
+                            600: '#2563eb', 700: '#1d4ed8', 800: '#1e3a5f',
+                            900: '#172554', 950: '#0f1d3a',
+                        },
+                    },
+                }
+            }
+        }
+    </script>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="Css/dashboard.css">
+    <link rel="stylesheet" href="Css/data-karyawan.css">
+</head>
+
+<body>
+    <div class="dashboard-layout">
+
+        <!-- ==================== SIDEBAR ==================== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-brand-icon">
+                    <img src="LOGO saja .png" alt="Zran Corporation" style="width:32px;height:32px;object-fit:contain;">
+                </div>
+                <div class="sidebar-brand-text">
+                    <h1>Zran Corporation</h1>
+                    <span>Sistem Absensi Karyawan</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <span class="nav-label">Menu Utama</span>
+                <a href="dashboard.html" class="nav-item" id="navDashboard">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="Data Karyawan.html" class="nav-item active" id="navKaryawan">
+                    <i data-lucide="users"></i>
+                    <span>Data Karyawan</span>
+                </a>
+                <a href="Absensi.html" class="nav-item" id="navAbsensi">
+                    <i data-lucide="clock"></i>
+                    <span>Absensi</span>
+                </a>
+                <a href="Laporan.html" class="nav-item" id="navLaporan">
+                    <i data-lucide="clipboard-list"></i>
+                    <span>Laporan</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Sidebar overlay (mobile) -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- ==================== MAIN CONTENT ==================== -->
+        <main class="main-content">
+
+            <!-- ========== TOP NAVBAR ========== -->
+            <header class="top-navbar">
+                <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+                    <i data-lucide="menu" style="width:22px;height:22px;"></i>
+                </button>
+
+                <h2 class="navbar-title">Data Karyawan</h2>
+
+                <div class="navbar-search">
+                    <i data-lucide="search" style="width:16px;height:16px;"></i>
+                    <input type="text" placeholder="Cari karyawan, laporan..." id="navSearchInput">
+                </div>
+
+                <div class="navbar-right">
+                    <button class="navbar-icon-btn" aria-label="Notifikasi">
+                        <i data-lucide="bell" style="width:18px;height:18px;"></i>
+                        <span class="notif-badge"></span>
+                    </button>
+
+                    <div class="profile-wrapper">
+                        <button class="profile-btn" id="profileBtn">
+                            <div class="profile-avatar">AD</div>
+                            <div class="profile-info">
+                                <div class="name">Admin</div>
+                                <div class="role">Administrator</div>
+                            </div>
+                            <i data-lucide="chevron-down" class="chevron"></i>
+                        </button>
+                        <div class="profile-dropdown" id="profileDropdown">
+                            <a href="#"><i data-lucide="user"></i> Profil Saya</a>
+                            <a href="#"><i data-lucide="settings"></i> Pengaturan</a>
+                            <div class="divider"></div>
+                            <a href="#" class="logout-link" onclick="handleLogout()">
+                                <i data-lucide="log-out"></i> Keluar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- ========== PAGE CONTENT ========== -->
+            <div class="page-content">
+
+                <!-- Page Header -->
+                <div class="page-header">
+                    <div class="page-header-text">
+                        <h1>Data Karyawan</h1>
+                        <p>Kelola informasi seluruh karyawan perusahaan</p>
+                    </div>
+                    <button class="btn-add" onclick="openModal()">
+                        <i data-lucide="plus"></i>
+                        Tambah Karyawan
+                    </button>
+                </div>
+
+                <!-- Toolbar: Search + Filters -->
+                <div class="toolbar">
+                    <div class="toolbar-search">
+                        <i data-lucide="search"></i>
+                        <input type="text" placeholder="Cari nama, ID, atau telepon..." id="searchKaryawan">
+                    </div>
+
+                    <div class="toolbar-filter">
+                        <select id="filterDepartemen">
+                            <option value="">Semua Departemen</option>
+                            <option value="IT">IT</option>
+                            <option value="HR">HR</option>
+                            <option value="Finance">Finance</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Operasional">Operasional</option>
+                        </select>
+                    </div>
+
+                    <div class="toolbar-filter">
+                        <select id="filterJabatan">
+                            <option value="">Semua Jabatan</option>
+                            <option value="Manager">Manager</option>
+                            <option value="Supervisor">Supervisor</option>
+                            <option value="Staff">Staff</option>
+                        </select>
+                    </div>
+
+                    <span class="toolbar-count" id="resultCount"></span>
+                </div>
+
+                <!-- Data Table Card -->
+                <div class="card">
+                    <div class="card-body" style="padding: 0;">
+                        <div class="table-wrapper">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Foto</th>
+                                        <th>Nama Karyawan</th>
+                                        <th>Jabatan</th>
+                                        <th>Departemen</th>
+                                        <th>No. Telepon</th>
+                                        <th>Status</th>
+                                        <th>Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="karyawanTableBody">
+                                    <!-- Rendered by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- Pagination -->
+                    <div class="pagination-wrapper">
+                        <div class="pagination-info" id="paginationInfo"></div>
+                        <div class="pagination-btns" id="paginationBtns"></div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ==================== MODAL: Tambah Karyawan ==================== -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Tambah Karyawan Baru</h2>
+                <button class="modal-close" id="modalCloseBtn">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <form id="addKaryawanForm">
+                <div class="modal-body">
+                    <div class="form-grid">
+                        <!-- Nama -->
+                        <div class="form-group full-width">
+                            <label>Nama Karyawan <span class="required">*</span></label>
+                            <input type="text" id="inputNama" placeholder="Masukkan nama lengkap" required>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="form-group">
+                            <label>Email <span class="required">*</span></label>
+                            <input type="email" id="inputEmail" placeholder="email@company.com" required>
+                        </div>
+
+                        <!-- Telepon -->
+                        <div class="form-group">
+                            <label>No. Telepon <span class="required">*</span></label>
+                            <input type="tel" id="inputTelp" placeholder="08xx-xxxx-xxxx" required>
+                        </div>
+
+                        <!-- Jabatan -->
+                        <div class="form-group">
+                            <label>Jabatan <span class="required">*</span></label>
+                            <select id="inputJabatan" required>
+                                <option value="">Pilih Jabatan</option>
+                                <option value="Manager">Manager</option>
+                                <option value="Supervisor">Supervisor</option>
+                                <option value="Staff">Staff</option>
+                            </select>
+                        </div>
+
+                        <!-- Departemen -->
+                        <div class="form-group">
+                            <label>Departemen <span class="required">*</span></label>
+                            <select id="inputDepartemen" required>
+                                <option value="">Pilih Departemen</option>
+                                <option value="IT">IT</option>
+                                <option value="HR">HR</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Operasional">Operasional</option>
+                            </select>
+                        </div>
+
+                        <!-- Alamat -->
+                        <div class="form-group full-width">
+                            <label>Alamat</label>
+                            <textarea id="inputAlamat" placeholder="Masukkan alamat lengkap"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" id="modalCancelBtn">Batal</button>
+                    <button type="submit" class="btn-save">
+                        Simpan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK (CDN Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="JS/firebase-config.js"></script>
+
+    <!-- JavaScript -->
+    <script src="JS/data-karyawan.js"></script>
+</body>
+
+</html>

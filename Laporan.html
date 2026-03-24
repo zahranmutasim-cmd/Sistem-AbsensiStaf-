@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan — Zran Corporation</title>
+    <meta name="description" content="Rekap laporan absensi karyawan — Zran Corporation">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- SheetJS for Excel export -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 'inter': ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe',
+                            300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6',
+                            600: '#2563eb', 700: '#1d4ed8', 800: '#1e3a5f',
+                            900: '#172554', 950: '#0f1d3a',
+                        },
+                    },
+                }
+            }
+        }
+    </script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="Css/dashboard.css">
+    <link rel="stylesheet" href="Css/data-karyawan.css">
+    <link rel="stylesheet" href="Css/laporan.css">
+
+</head>
+
+<body>
+    <div class="dashboard-layout">
+
+        <!-- ==================== SIDEBAR ==================== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-brand-icon">
+                    <img src="LOGO saja .png" alt="Zran Corporation" style="width:32px;height:32px;object-fit:contain;">
+                </div>
+                <div class="sidebar-brand-text">
+                    <h1>Zran Corporation</h1>
+                    <span>Sistem Absensi Karyawan</span>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <span class="nav-label">Menu Utama</span>
+
+                <a href="dashboard.html" class="nav-item" id="navDashboard">
+                    <i data-lucide="layout-dashboard"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="Data Karyawan.html" class="nav-item" id="navKaryawan">
+                    <i data-lucide="users"></i>
+                    <span>Data Karyawan</span>
+                </a>
+                <a href="Absensi.html" class="nav-item" id="navAbsensi">
+                    <i data-lucide="clock"></i>
+                    <span>Absensi</span>
+                </a>
+                <a href="Laporan.html" class="nav-item active" id="navLaporan">
+                    <i data-lucide="clipboard-list"></i>
+                    <span>Laporan</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Sidebar overlay (mobile) -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- ==================== MAIN CONTENT ==================== -->
+        <main class="main-content">
+            <header class="top-navbar">
+                <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+                    <i data-lucide="menu" style="width:22px;height:22px;"></i>
+                </button>
+
+                <h2 class="navbar-title">Laporan</h2>
+
+                <div class="navbar-right">
+                    <div class="profile-wrapper">
+                        <button class="profile-btn" id="profileBtn">
+                            <div class="profile-avatar">AD</div>
+                            <div class="profile-info">
+                                <div class="name">Admin</div>
+                                <div class="role">Administrator</div>
+                            </div>
+                            <i data-lucide="chevron-down" class="chevron"></i>
+                        </button>
+                        <div class="profile-dropdown" id="profileDropdown">
+                            <a href="#"><i data-lucide="user"></i> Profil Saya</a>
+                            <a href="#"><i data-lucide="settings"></i> Pengaturan</a>
+                            <div class="divider"></div>
+                            <a href="#" class="logout-link" onclick="handleLogout()">
+                                <i data-lucide="log-out"></i> Keluar
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- ========== PAGE CONTENT ========== -->
+            <div class="page-content">
+
+                <!-- ===== STAT CARDS ===== -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">
+                            <i data-lucide="calendar-range"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="statHariKerja">0</h3>
+                            <p>Hari Kerja</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon green">
+                            <i data-lucide="user-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="statTotalHadir">0</h3>
+                            <p>Total Hadir</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon amber">
+                            <i data-lucide="alarm-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="statTotalTerlambat">0</h3>
+                            <p>Terlambat</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon purple">
+                            <i data-lucide="calendar-off"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="statTotalIzinSakit">0</h3>
+                            <p>Izin / Sakit</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon red">
+                            <i data-lucide="user-x"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="statTotalAlpha">0</h3>
+                            <p>Alpha</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== REKAP ABSENSI TABLE ===== -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Rekap Absensi</h2>
+                        <div class="card-header-actions">
+                            <button class="btn-export" onclick="exportToExcel()" id="btnExport">
+                                <i data-lucide="download"></i>
+                                Export Excel
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Toolbar / Filters -->
+                    <div class="laporan-toolbar">
+                        <div class="filter-group">
+                            <label class="filter-label">Bulan</label>
+                            <div class="toolbar-filter">
+                                <select id="filterBulan">
+                                    <option value="1">Januari</option>
+                                    <option value="2">Februari</option>
+                                    <option value="3" selected>Maret</option>
+                                    <option value="4">April</option>
+                                    <option value="5">Mei</option>
+                                    <option value="6">Juni</option>
+                                    <option value="7">Juli</option>
+                                    <option value="8">Agustus</option>
+                                    <option value="9">September</option>
+                                    <option value="10">Oktober</option>
+                                    <option value="11">November</option>
+                                    <option value="12">Desember</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="filter-label">Tahun</label>
+                            <div class="toolbar-filter">
+                                <select id="filterTahun">
+                                    <option value="2025">2025</option>
+                                    <option value="2026" selected>2026</option>
+                                    <option value="2027">2027</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="filter-label">Departemen</label>
+                            <div class="toolbar-filter">
+                                <select id="filterDepartemen">
+                                    <option value="">Semua</option>
+                                    <option value="IT">IT</option>
+                                    <option value="HR">HR</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="Operasional">Operasional</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button class="btn-generate" onclick="generateLaporan()">
+                            <i data-lucide="file-search"></i>
+                            Generate Laporan
+                        </button>
+                    </div>
+
+                    <!-- Table -->
+                    <div class="card-body" style="padding: 0;">
+                        <div class="table-wrapper">
+                            <table class="data-table" id="rekapTable">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Nama Karyawan</th>
+                                        <th>Departemen</th>
+                                        <th>Hadir</th>
+                                        <th>Terlambat</th>
+                                        <th>Izin</th>
+                                        <th>Sakit</th>
+                                        <th>Alpha</th>
+                                        <th>Total Jam</th>
+                                        <th>% Kehadiran</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rekapTableBody">
+                                    <!-- Rendered by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDK (CDN Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script src="JS/firebase-config.js"></script>
+
+    <!-- JavaScript -->
+    <script src="JS/laporan.js"></script>
+</body>
+
+</html>
